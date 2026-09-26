@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f2f2ee" />
+  <meta name="description" content="Answer ten questions and see whether machine learning is worth trying for your problem." />
+  <meta property="og:title" content="Should I Use ML?" />
+  <meta property="og:description" content="Ten questions about your data and problem. One small model. A useful answer." />
+  <title>Should I Use ML?</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./">Should I use ML?</a>
+    <nav aria-label="Site links">
+      <button class="plain-button" id="aboutBtn" type="button">how it works</button>
+      <a href="https://github.com/RoyAalekh/should_i_use_ml">source</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" id="quizSection">
+      <div class="intro-code">10 QUESTIONS</div>
+      <h1>Do you actually need machine learning?</h1>
+      <p class="intro-copy">Answer ten questions about your data and the problem. A small model estimates whether ML is worth trying.</p>
+      <p class="intro-note">It is not always yes. That is the point.</p>
+    </section>
+
+    <form id="mlForm" class="form" autocomplete="off">
+      <fieldset class="question" data-feature="data_scale">
+        <legend><span>01</span><b>How much historical data do you have?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="data_scale" value="0"><span><b>&lt; 100 rows</b><small>that is a notebook, not a dataset</small></span></label>
+          <label><input type="radio" name="data_scale" value="1"><span><b>100 to 1k</b><small>could still be enough for something simple</small></span></label>
+          <label><input type="radio" name="data_scale" value="2" checked><span><b>1k to 100k</b><small>now we have something to work with</small></span></label>
+          <label><input type="radio" name="data_scale" value="3"><span><b>100k to 1m</b><small>plenty, if it is useful data</small></span></label>
+          <label><input type="radio" name="data_scale" value="4"><span><b>1m+</b><small>please do not call it big data</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="prediction_repetition">
+        <legend><span>02</span><b>How often will you make this decision?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="prediction_repetition" value="0"><span><b>Once</b><small>you may just need a person</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="1"><span><b>Monthly</b><small>not much repetition</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="2" checked><span><b>Daily</b><small>automation starts to matter</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="3"><span><b>Hourly</b><small>humans will get bored</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="4"><span><b>Constantly</b><small>yes, a machine may have a job here</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="target_quality">
+        <legend><span>03</span><b>Can you clearly measure the thing you want to predict?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="target_quality" value="0"><span><b>No</b><small>this is a problem</small></span></label>
+          <label><input type="radio" name="target_quality" value="1"><span><b>Not really</b><small>people define it differently</small></span></label>
+          <label><input type="radio" name="target_quality" value="2" checked><span><b>Mostly</b><small>some messy cases</small></span></label>
+          <label><input type="radio" name="target_quality" value="3"><span><b>Yes</b><small>clear enough to evaluate</small></span></label>
+          <label><input type="radio" name="target_quality" value="4"><span><b>Very clearly</b><small>rare and beautiful</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="pattern_complexity">
+        <legend><span>04</span><b>How complicated is the relationship between inputs and outcome?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="pattern_complexity" value="0"><span><b>Basically one rule</b><small>if x &gt; 7, do the thing</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="1"><span><b>Mostly simple</b><small>a basic regression may be enough</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="2" checked><span><b>Mixed</b><small>a few things interact</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="3"><span><b>Messy</b><small>many things interact</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="4"><span><b>Very messy</b><small>good luck to all involved</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="rule_solution">
+        <legend><span>05</span><b>How much can simple rules already solve?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="rule_solution" value="0"><span><b>Almost none</b><small>rules are not helping much</small></span></label>
+          <label><input type="radio" name="rule_solution" value="1"><span><b>About 25%</b><small>still a lot left</small></span></label>
+          <label><input type="radio" name="rule_solution" value="2" checked><span><b>About 50%</b><small>worth comparing</small></span></label>
+          <label><input type="radio" name="rule_solution" value="3"><span><b>About 80%</b><small>do not ignore the boring solution</small></span></label>
+          <label><input type="radio" name="rule_solution" value="4"><span><b>Almost all of it</b><small>close sklearn for a minute</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="generalization_need">
+        <legend><span>06</span><b>Will it need to handle new cases it has never seen?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="generalization_need" value="0"><span><b>No</b><small>a lookup may be enough</small></span></label>
+          <label><input type="radio" name="generalization_need" value="1"><span><b>Rarely</b><small>mostly known cases</small></span></label>
+          <label><input type="radio" name="generalization_need" value="2" checked><span><b>Sometimes</b><small>could go either way</small></span></label>
+          <label><input type="radio" name="generalization_need" value="3"><span><b>Usually</b><small>this starts to look like prediction</small></span></label>
+          <label><input type="radio" name="generalization_need" value="4"><span><b>Yes, constantly</b><small>new cases all day</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="feedback_loop">
+        <legend><span>07</span><b>Will you see what happened after the prediction?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="feedback_loop" value="0"><span><b>Never</b><small>then you will not know when it goes bad</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="1"><span><b>Maybe yearly</b><small>barely a feedback loop</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="2" checked><span><b>Sometimes</b><small>better than nothing</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="3"><span><b>Regularly</b><small>good</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="4"><span><b>Continuously</b><small>very good</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="sql_sufficiency">
+        <legend><span>08</span><b>Could SQL, a dashboard, or a simple calculation solve it?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="sql_sufficiency" value="0"><span><b>No</b><small>fair enough</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="1"><span><b>Probably not</b><small>prediction may add something</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="2" checked><span><b>Maybe</b><small>try it before building a model zoo</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="3"><span><b>Probably</b><small>SQL is standing right there</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="4"><span><b>Yes</b><small>you already know the answer</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="ai_pressure">
+        <legend><span>09</span><b>Is ML being pushed before the problem is clear?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="ai_pressure" value="0"><span><b>No</b><small>healthy</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="1"><span><b>A little</b><small>someone mentioned it once</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="2" checked><span><b>Somewhat</b><small>it has appeared in slides</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="3"><span><b>Yes</b><small>the solution arrived first</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="4"><span><b>Very much</b><small>it is already in the OKRs</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="distribution_stability">
+        <legend><span>10</span><b>Will future data look reasonably similar to past data?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="distribution_stability" value="0"><span><b>No</b><small>everything changes all the time</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="1"><span><b>Not much</b><small>expect trouble</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="2" checked><span><b>Somewhat</b><small>monitor it</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="3"><span><b>Mostly</b><small>good enough to test</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="4"><span><b>Very stable</b><small>nice problem to have</small></span></label>
+        </div>
+      </fieldset>
+
+      <div class="submit-row">
+        <div><div class="submit-label">DONE?</div><p>Your answers stay in this browser.</p></div>
+        <button id="submitBtn" class="primary" type="submit">Check</button>
+      </div>
+    </form>
+
+    <section class="result hidden" id="resultSection" aria-live="polite">
+      <div class="result-head">
+        <div><div class="section-code">RESULT</div><div class="status" id="stamp">MAYBE</div></div>
+        <button class="plain-button" id="editBtn" type="button">change answers</button>
+      </div>
+
+      <div class="score-block">
+        <div class="probability" id="probability">0%</div>
+        <div class="prob-copy">
+          <div class="prob-label">chance ML is worth trying</div>
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div><div class="meter-mark"></div></div>
+        </div>
+      </div>
+
+      <div class="verdict-block"><h2 id="verdictTitle">Result</h2><p id="verdictCopy"></p></div>
+
+      <div class="summary-line"><span>What this looks like</span><div><strong id="summary"></strong><p id="sentence"></p></div></div>
+
+      <div class="evidence-grid">
+        <section><h3>Why ML may help</h3><div id="forEvidence" class="evidence-list"></div></section>
+        <section><h3>Why it may not</h3><div id="againstEvidence" class="evidence-list"></div></section>
+      </div>
+
+      <div class="next-step" id="nextStep"></div>
+
+      <div class="actions">
+        <button class="primary small" id="shareBtn" type="button">Copy result</button>
+        <button class="secondary" id="cardBtn" type="button">Save image</button>
+      </div>
+
+      <details class="math"><summary>Show the maths</summary><p>The model is logistic regression. Each answer moves the score up or down. The bars above show the strongest effects relative to the middle answer.</p><pre id="equation"></pre></details>
+    </section>
+  </main>
+
+  <footer><p><strong>Should I use ML?</strong></p><p>Sometimes the answer is SQL.</p></footer>
+
+  <dialog id="aboutDialog">
+    <div class="dialog-head"><div class="section-code">HOW IT WORKS</div><button class="dialog-close" id="closeDialog" aria-label="Close">close</button></div>
+    <h2>A small model about whether you need a model.</h2>
+    <p>It uses logistic regression with ten inputs from the questions on this page. Everything runs in your browser.</p>
+    <p>The first version was trained on 9,000 made-up project examples. The training rules are in the repository. So treat the number as a playful estimate, not a fact.</p>
+    <p>The useful part is the breakdown of what pushed the result up or down.</p>
+    <div class="metrics" id="metrics"></div>
+  </dialog>
+
+  <canvas id="shareCanvas" width="1200" height="630" hidden></canvas>
+  <script src="model.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

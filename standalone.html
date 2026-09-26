@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f2f2ee" />
+  <meta name="description" content="Answer ten questions and see whether machine learning is worth trying for your problem." />
+  <meta property="og:title" content="Should I Use ML?" />
+  <meta property="og:description" content="Ten questions about your data and problem. One small model. A useful answer." />
+  <title>Should I Use ML?</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+:root {
+  --bg: #f2f2ee;
+  --surface: #ffffff;
+  --ink: #111111;
+  --muted: #666660;
+  --line: #c9c9c1;
+  --accent: #df4b24;
+  --max: 1180px;
+  --pad: clamp(18px, 4vw, 42px);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button, input { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+a { color: inherit; }
+.site-header {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 22px var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ink);
+}
+.brand { text-decoration: none; font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+nav { display: flex; align-items: center; gap: 22px; font-size: 13px; }
+nav a { text-decoration: none; border-bottom: 1px solid currentColor; }
+.plain-button { border: 0; border-bottom: 1px solid currentColor; padding: 0; background: transparent; color: inherit; cursor: pointer; }
+main { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+.intro { display: grid; grid-template-columns: minmax(120px, 180px) 1fr; column-gap: clamp(28px, 6vw, 84px); padding: clamp(70px, 11vw, 140px) 0 clamp(70px, 9vw, 110px); }
+.intro-code, .section-code, .submit-label { font-size: 11px; line-height: 1.2; letter-spacing: 0.12em; font-weight: 700; }
+.intro h1 { grid-column: 2; margin: 0; max-width: 830px; font-size: clamp(46px, 7vw, 94px); line-height: 0.96; font-weight: 500; letter-spacing: -0.055em; }
+.intro-copy { grid-column: 2; max-width: 620px; margin: 34px 0 0; font-size: clamp(18px, 2vw, 23px); line-height: 1.35; letter-spacing: -0.02em; }
+.intro-note { grid-column: 2; margin: 13px 0 0; color: var(--muted); font-size: 13px; }
+.form { border-top: 1px solid var(--ink); }
+.question { display: grid; grid-template-columns: minmax(240px, 0.9fr) 1.7fr; gap: clamp(28px, 6vw, 84px); padding: 34px 0 40px; margin: 0; border: 0; border-bottom: 1px solid var(--line); }
+.question legend { display: contents; }
+.question legend span { grid-column: 1; align-self: start; display: block; padding-top: 2px; font-size: 11px; letter-spacing: 0.1em; font-weight: 700; color: var(--accent); }
+.question legend b { grid-column: 1; margin-top: 24px; max-width: 360px; font-size: clamp(20px, 2.2vw, 28px); line-height: 1.15; font-weight: 500; letter-spacing: -0.025em; }
+.choices { grid-column: 2; grid-row: 1 / span 2; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-self: start; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.choices label { position: relative; cursor: pointer; min-width: 0; }
+.choices label + label { border-left: 1px solid var(--line); }
+.choices input { position: absolute; opacity: 0; pointer-events: none; }
+.choices span { min-height: 116px; padding: 15px 12px 13px; display: flex; flex-direction: column; justify-content: space-between; background: transparent; }
+.choices b { font-size: 13px; line-height: 1.25; font-weight: 600; }
+.choices small { color: var(--muted); font-size: 11px; line-height: 1.25; }
+.choices input:checked + span { background: var(--ink); color: var(--surface); }
+.choices input:checked + span small { color: #d8d8d2; }
+.choices input:checked + span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-bottom: 20px; }
+.choices input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -2px; }
+.submit-row { min-height: 150px; display: flex; align-items: center; justify-content: space-between; gap: 30px; border-bottom: 1px solid var(--ink); }
+.submit-row p { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+.primary, .secondary { border: 1px solid var(--ink); min-height: 48px; padding: 0 24px; background: var(--ink); color: var(--surface); cursor: pointer; font-weight: 600; font-size: 14px; }
+.primary:hover { background: var(--accent); border-color: var(--accent); }
+.primary.small { min-height: 42px; }
+.secondary { background: transparent; color: var(--ink); }
+.secondary:hover { background: var(--surface); }
+.result { padding: clamp(70px, 10vw, 130px) 0 100px; border-bottom: 1px solid var(--ink); }
+.hidden { display: none; }
+.result-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 30px; }
+.status { margin-top: 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.07em; color: var(--accent); }
+.score-block { margin-top: clamp(48px, 8vw, 86px); display: grid; grid-template-columns: minmax(260px, 0.9fr) 1.7fr; gap: clamp(28px, 6vw, 84px); align-items: end; }
+.probability { font-size: clamp(92px, 14vw, 180px); line-height: 0.8; font-weight: 500; letter-spacing: -0.07em; }
+.prob-copy { padding-bottom: 11px; }
+.prob-label { font-size: 13px; color: var(--muted); }
+.meter { margin-top: 20px; height: 8px; position: relative; background: #d9d9d3; }
+.meter-fill { height: 100%; width: 0; background: var(--accent); transition: width 350ms ease; }
+.meter-mark { position: absolute; left: 50%; top: -5px; width: 1px; height: 18px; background: var(--ink); }
+.verdict-block, .summary-line { display: grid; grid-template-columns: minmax(260px, 0.9fr) 1.7fr; gap: clamp(28px, 6vw, 84px); }
+.verdict-block { margin-top: 70px; padding-top: 26px; border-top: 1px solid var(--ink); }
+.verdict-block h2 { margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.04; letter-spacing: -0.04em; font-weight: 500; }
+.verdict-block p { margin: 0; max-width: 690px; font-size: 18px; line-height: 1.45; }
+.summary-line { margin-top: 34px; padding: 24px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.summary-line > span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.summary-line strong { font-size: 18px; font-weight: 600; }
+.summary-line p { margin: 7px 0 0; color: var(--muted); max-width: 680px; }
+.evidence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 6vw, 84px); margin-top: 62px; }
+.evidence-grid h3 { margin: 0 0 22px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; }
+.evidence-item { padding: 14px 0 16px; border-top: 1px solid var(--line); }
+.evidence-item:last-child { border-bottom: 1px solid var(--line); }
+.evidence-head { display: flex; justify-content: space-between; gap: 20px; font-size: 13px; }
+.evidence-head b { font-weight: 600; }
+.evidence-head span { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.evidence-bar { width: 100%; height: 4px; background: #d9d9d3; margin-top: 11px; }
+.evidence-bar i { display: block; height: 100%; background: var(--accent); }
+.evidence-item.negative .evidence-bar i { background: var(--ink); }
+.evidence-note { margin-top: 8px; color: var(--muted); font-size: 12px; }
+.next-step { margin-top: 62px; padding: 22px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-size: 15px; }
+.next-step strong { margin-right: 8px; font-size: 11px; letter-spacing: 0.08em; }
+.actions { display: flex; gap: 10px; margin-top: 28px; }
+.math { margin-top: 62px; max-width: 820px; }
+.math summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+.math p { color: var(--muted); font-size: 13px; }
+pre { margin: 18px 0 0; padding: 18px; overflow: auto; border: 1px solid var(--line); background: var(--surface); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; line-height: 1.6; }
+footer { max-width: var(--max); margin: 0 auto; padding: 32px var(--pad) 48px; display: flex; justify-content: space-between; gap: 30px; color: var(--muted); font-size: 12px; }
+footer p { margin: 0; }
+footer strong { color: var(--ink); }
+dialog { width: min(700px, calc(100vw - 32px)); border: 1px solid var(--ink); padding: 28px; background: var(--bg); color: var(--ink); }
+dialog::backdrop { background: rgba(0,0,0,0.34); }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; }
+.dialog-close { border: 0; background: transparent; cursor: pointer; text-decoration: underline; font-size: 12px; }
+dialog h2 { margin: 50px 0 24px; font-size: 40px; line-height: 1; letter-spacing: -0.04em; font-weight: 500; }
+dialog p { max-width: 610px; }
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); margin: 32px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.metric { padding: 18px 10px 18px 0; }
+.metric + .metric { border-left: 1px solid var(--line); padding-left: 18px; }
+.metric b { display: block; font-size: 28px; font-weight: 500; letter-spacing: -0.04em; }
+.metric span { color: var(--muted); font-size: 11px; }
+.tiny { color: var(--muted); font-size: 11px; }
+@media (max-width: 860px) {
+  .intro { grid-template-columns: 1fr; gap: 24px; }
+  .intro h1, .intro-copy, .intro-note { grid-column: 1; }
+  .question { grid-template-columns: 1fr; gap: 24px; }
+  .question legend b { margin-top: 12px; }
+  .choices { grid-column: 1; grid-row: auto; overflow-x: auto; }
+  .choices label { min-width: 140px; }
+  .score-block, .verdict-block, .summary-line { grid-template-columns: 1fr; gap: 24px; }
+  .probability { margin-bottom: 14px; }
+}
+@media (max-width: 620px) {
+  .site-header { padding-top: 18px; padding-bottom: 18px; }
+  nav { gap: 14px; }
+  .intro { padding: 64px 0 70px; }
+  .intro h1 { font-size: clamp(46px, 15vw, 70px); }
+  .question { padding: 28px 0 32px; }
+  .choices span { min-height: 108px; }
+  .submit-row { align-items: flex-start; flex-direction: column; padding: 30px 0; min-height: 0; }
+  .primary { width: 100%; }
+  .evidence-grid { grid-template-columns: 1fr; gap: 48px; }
+  .actions { flex-direction: column; }
+  .secondary { width: 100%; }
+  footer { flex-direction: column; }
+  .metrics { grid-template-columns: 1fr; }
+  .metric + .metric { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .meter-fill { transition: none; }
+}
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./">Should I use ML?</a>
+    <nav aria-label="Site links">
+      <button class="plain-button" id="aboutBtn" type="button">how it works</button>
+      <a href="https://github.com/RoyAalekh/should_i_use_ml">source</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" id="quizSection">
+      <div class="intro-code">10 QUESTIONS</div>
+      <h1>Do you actually need machine learning?</h1>
+      <p class="intro-copy">Answer ten questions about your data and the problem. A small model estimates whether ML is worth trying.</p>
+      <p class="intro-note">It is not always yes. That is the point.</p>
+    </section>
+
+    <form id="mlForm" class="form" autocomplete="off">
+      <fieldset class="question" data-feature="data_scale">
+        <legend><span>01</span><b>How much historical data do you have?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="data_scale" value="0"><span><b>&lt; 100 rows</b><small>that is a notebook, not a dataset</small></span></label>
+          <label><input type="radio" name="data_scale" value="1"><span><b>100 to 1k</b><small>could still be enough for something simple</small></span></label>
+          <label><input type="radio" name="data_scale" value="2" checked><span><b>1k to 100k</b><small>now we have something to work with</small></span></label>
+          <label><input type="radio" name="data_scale" value="3"><span><b>100k to 1m</b><small>plenty, if it is useful data</small></span></label>
+          <label><input type="radio" name="data_scale" value="4"><span><b>1m+</b><small>please do not call it big data</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="prediction_repetition">
+        <legend><span>02</span><b>How often will you make this decision?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="prediction_repetition" value="0"><span><b>Once</b><small>you may just need a person</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="1"><span><b>Monthly</b><small>not much repetition</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="2" checked><span><b>Daily</b><small>automation starts to matter</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="3"><span><b>Hourly</b><small>humans will get bored</small></span></label>
+          <label><input type="radio" name="prediction_repetition" value="4"><span><b>Constantly</b><small>yes, a machine may have a job here</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="target_quality">
+        <legend><span>03</span><b>Can you clearly measure the thing you want to predict?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="target_quality" value="0"><span><b>No</b><small>this is a problem</small></span></label>
+          <label><input type="radio" name="target_quality" value="1"><span><b>Not really</b><small>people define it differently</small></span></label>
+          <label><input type="radio" name="target_quality" value="2" checked><span><b>Mostly</b><small>some messy cases</small></span></label>
+          <label><input type="radio" name="target_quality" value="3"><span><b>Yes</b><small>clear enough to evaluate</small></span></label>
+          <label><input type="radio" name="target_quality" value="4"><span><b>Very clearly</b><small>rare and beautiful</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="pattern_complexity">
+        <legend><span>04</span><b>How complicated is the relationship between inputs and outcome?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="pattern_complexity" value="0"><span><b>Basically one rule</b><small>if x &gt; 7, do the thing</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="1"><span><b>Mostly simple</b><small>a basic regression may be enough</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="2" checked><span><b>Mixed</b><small>a few things interact</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="3"><span><b>Messy</b><small>many things interact</small></span></label>
+          <label><input type="radio" name="pattern_complexity" value="4"><span><b>Very messy</b><small>good luck to all involved</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="rule_solution">
+        <legend><span>05</span><b>How much can simple rules already solve?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="rule_solution" value="0"><span><b>Almost none</b><small>rules are not helping much</small></span></label>
+          <label><input type="radio" name="rule_solution" value="1"><span><b>About 25%</b><small>still a lot left</small></span></label>
+          <label><input type="radio" name="rule_solution" value="2" checked><span><b>About 50%</b><small>worth comparing</small></span></label>
+          <label><input type="radio" name="rule_solution" value="3"><span><b>About 80%</b><small>do not ignore the boring solution</small></span></label>
+          <label><input type="radio" name="rule_solution" value="4"><span><b>Almost all of it</b><small>close sklearn for a minute</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="generalization_need">
+        <legend><span>06</span><b>Will it need to handle new cases it has never seen?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="generalization_need" value="0"><span><b>No</b><small>a lookup may be enough</small></span></label>
+          <label><input type="radio" name="generalization_need" value="1"><span><b>Rarely</b><small>mostly known cases</small></span></label>
+          <label><input type="radio" name="generalization_need" value="2" checked><span><b>Sometimes</b><small>could go either way</small></span></label>
+          <label><input type="radio" name="generalization_need" value="3"><span><b>Usually</b><small>this starts to look like prediction</small></span></label>
+          <label><input type="radio" name="generalization_need" value="4"><span><b>Yes, constantly</b><small>new cases all day</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="feedback_loop">
+        <legend><span>07</span><b>Will you see what happened after the prediction?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="feedback_loop" value="0"><span><b>Never</b><small>then you will not know when it goes bad</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="1"><span><b>Maybe yearly</b><small>barely a feedback loop</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="2" checked><span><b>Sometimes</b><small>better than nothing</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="3"><span><b>Regularly</b><small>good</small></span></label>
+          <label><input type="radio" name="feedback_loop" value="4"><span><b>Continuously</b><small>very good</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="sql_sufficiency">
+        <legend><span>08</span><b>Could SQL, a dashboard, or a simple calculation solve it?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="sql_sufficiency" value="0"><span><b>No</b><small>fair enough</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="1"><span><b>Probably not</b><small>prediction may add something</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="2" checked><span><b>Maybe</b><small>try it before building a model zoo</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="3"><span><b>Probably</b><small>SQL is standing right there</small></span></label>
+          <label><input type="radio" name="sql_sufficiency" value="4"><span><b>Yes</b><small>you already know the answer</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="ai_pressure">
+        <legend><span>09</span><b>Is ML being pushed before the problem is clear?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="ai_pressure" value="0"><span><b>No</b><small>healthy</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="1"><span><b>A little</b><small>someone mentioned it once</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="2" checked><span><b>Somewhat</b><small>it has appeared in slides</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="3"><span><b>Yes</b><small>the solution arrived first</small></span></label>
+          <label><input type="radio" name="ai_pressure" value="4"><span><b>Very much</b><small>it is already in the OKRs</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="question" data-feature="distribution_stability">
+        <legend><span>10</span><b>Will future data look reasonably similar to past data?</b></legend>
+        <div class="choices">
+          <label><input type="radio" name="distribution_stability" value="0"><span><b>No</b><small>everything changes all the time</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="1"><span><b>Not much</b><small>expect trouble</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="2" checked><span><b>Somewhat</b><small>monitor it</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="3"><span><b>Mostly</b><small>good enough to test</small></span></label>
+          <label><input type="radio" name="distribution_stability" value="4"><span><b>Very stable</b><small>nice problem to have</small></span></label>
+        </div>
+      </fieldset>
+
+      <div class="submit-row">
+        <div><div class="submit-label">DONE?</div><p>Your answers stay in this browser.</p></div>
+        <button id="submitBtn" class="primary" type="submit">Check</button>
+      </div>
+    </form>
+
+    <section class="result hidden" id="resultSection" aria-live="polite">
+      <div class="result-head">
+        <div><div class="section-code">RESULT</div><div class="status" id="stamp">MAYBE</div></div>
+        <button class="plain-button" id="editBtn" type="button">change answers</button>
+      </div>
+
+      <div class="score-block">
+        <div class="probability" id="probability">0%</div>
+        <div class="prob-copy">
+          <div class="prob-label">chance ML is worth trying</div>
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div><div class="meter-mark"></div></div>
+        </div>
+      </div>
+
+      <div class="verdict-block"><h2 id="verdictTitle">Result</h2><p id="verdictCopy"></p></div>
+
+      <div class="summary-line"><span>What this looks like</span><div><strong id="summary"></strong><p id="sentence"></p></div></div>
+
+      <div class="evidence-grid">
+        <section><h3>Why ML may help</h3><div id="forEvidence" class="evidence-list"></div></section>
+        <section><h3>Why it may not</h3><div id="againstEvidence" class="evidence-list"></div></section>
+      </div>
+
+      <div class="next-step" id="nextStep"></div>
+
+      <div class="actions">
+        <button class="primary small" id="shareBtn" type="button">Copy result</button>
+        <button class="secondary" id="cardBtn" type="button">Save image</button>
+      </div>
+
+      <details class="math"><summary>Show the maths</summary><p>The model is logistic regression. Each answer moves the score up or down. The bars above show the strongest effects relative to the middle answer.</p><pre id="equation"></pre></details>
+    </section>
+  </main>
+
+  <footer><p><strong>Should I use ML?</strong></p><p>Sometimes the answer is SQL.</p></footer>
+
+  <dialog id="aboutDialog">
+    <div class="dialog-head"><div class="section-code">HOW IT WORKS</div><button class="dialog-close" id="closeDialog" aria-label="Close">close</button></div>
+    <h2>A small model about whether you need a model.</h2>
+    <p>It uses logistic regression with ten inputs from the questions on this page. Everything runs in your browser.</p>
+    <p>The first version was trained on 9,000 made-up project examples. The training rules are in the repository. So treat the number as a playful estimate, not a fact.</p>
+    <p>The useful part is the breakdown of what pushed the result up or down.</p>
+    <div class="metrics" id="metrics"></div>
+  </dialog>
+
+  <canvas id="shareCanvas" width="1200" height="630" hidden></canvas>
+  <script>
+// Model used by the site. See train_model.py for the fitting code.
+window.SHOULD_I_USE_ML_MODEL = {
+  "name": "should-i-use-ml-v1",
+  "version": "1.0.0",
+  "model_type": "logistic_regression",
+  "training_data": "synthetic_project_scenarios",
+  "training_rows": 9000,
+  "seed": 731,
+  "features": [
+    "data_scale",
+    "prediction_repetition",
+    "target_quality",
+    "pattern_complexity",
+    "rule_solution",
+    "generalization_need",
+    "feedback_loop",
+    "sql_sufficiency",
+    "ai_pressure",
+    "distribution_stability"
+  ],
+  "intercept": -4.722181718194564,
+  "coefficients": {
+    "data_scale": 0.5118901281249142,
+    "prediction_repetition": 0.6692842964069381,
+    "target_quality": 1.0368617840496737,
+    "pattern_complexity": 0.5137238901371032,
+    "rule_solution": -0.7821531797350054,
+    "generalization_need": 0.5059162675137092,
+    "feedback_loop": 0.2727848014702681,
+    "sql_sufficiency": -0.6792916416440794,
+    "ai_pressure": -0.3497267826980153,
+    "distribution_stability": 0.5065761637469219
+  },
+  "metrics": {
+    "holdout_rows": 3000,
+    "accuracy_0_5": 0.8373333333333334,
+    "roc_auc": 0.9148762442133249,
+    "brier": 0.11686118349092131,
+    "positive_rate": 0.4645
+  },
+  "disclosure": "The model was fitted to simulated project cases. The score does not tell you whether ML is right for a real project."
+};
+</script>
+  <script>
+(() => {
+  'use strict';
+  const MODEL = window.SHOULD_I_USE_ML_MODEL;
+  if (!MODEL) throw new Error('Model file is missing.');
+
+  const FEATURES = {
+    data_scale: { label: 'Amount of data', positive: 'You have enough past examples to learn from', negative: 'There may not be enough data to learn much' },
+    prediction_repetition: { label: 'How often it runs', positive: 'The decision happens often enough for automation to matter', negative: 'This decision does not happen very often' },
+    target_quality: { label: 'Target quality', positive: 'The outcome is clear enough to measure', negative: 'The thing you want to predict is not clearly defined' },
+    pattern_complexity: { label: 'Problem complexity', positive: 'Simple rules may miss useful patterns', negative: 'A simple rule may already describe the problem' },
+    rule_solution: { label: 'Simple rules', positive: 'Rules leave a lot of the problem unsolved', negative: 'Simple rules already solve most of it' },
+    generalization_need: { label: 'New cases', positive: 'The system must handle cases it has never seen', negative: 'A lookup or fixed rule may be enough' },
+    feedback_loop: { label: 'Feedback', positive: 'You will see outcomes and can check the model later', negative: 'You may not know when the model gets worse' },
+    sql_sufficiency: { label: 'Simple analysis', positive: 'SQL or a dashboard will not solve the main problem', negative: 'SQL, a dashboard, or a calculation may already solve it' },
+    ai_pressure: { label: 'Pressure to use ML', positive: 'The problem seems to come before the method', negative: 'ML may have been chosen before the problem was clear' },
+    distribution_stability: { label: 'Future data', positive: 'Future data may look enough like the past to learn from it', negative: 'The world may change faster than the model can keep up' },
+  };
+
+  const $ = (s) => document.querySelector(s);
+  const form = $('#mlForm');
+  const resultSection = $('#resultSection');
+  const quizSection = $('#quizSection');
+  const sigmoid = (x) => 1 / (1 + Math.exp(-x));
+
+  function getValues() {
+    return Object.fromEntries(MODEL.features.map(name => {
+      const el = form.querySelector(`input[name="${name}"]:checked`);
+      return [name, Number(el ? el.value : 2)];
+    }));
+  }
+
+  function rawScore(values) {
+    return MODEL.features.reduce((z, name) => z + MODEL.coefficients[name] * values[name], MODEL.intercept);
+  }
+
+  function probability(values) { return sigmoid(rawScore(values)); }
+
+  function contributions(values) {
+    return MODEL.features.map(name => {
+      const coeff = MODEL.coefficients[name];
+      const centered = coeff * (values[name] - 2);
+      return { name, value: values[name], centered, meta: FEATURES[name] };
+    });
+  }
+
+  function pickSummary(p, v) {
+    if (v.ai_pressure >= 3 && (v.rule_solution >= 3 || v.sql_sufficiency >= 3)) {
+      return ['The method came first', 'Someone seems to want ML more than the problem needs it.'];
+    }
+    if (v.data_scale <= 1 && v.pattern_complexity >= 3) {
+      return ['Small data, big problem', 'The problem is complex, but the dataset is tiny. That is a rough combination.'];
+    }
+    if (v.rule_solution >= 3 && v.sql_sufficiency >= 3) {
+      return ['Probably a simpler system', 'Rules, SQL, or a dashboard may get you most of the way there.'];
+    }
+    if (v.target_quality <= 1) {
+      return ['No clear target yet', 'Before choosing a model, decide what success actually means and how to measure it.'];
+    }
+    if (v.distribution_stability <= 1 && v.feedback_loop <= 1) {
+      return ['Hard to trust over time', 'The data changes a lot and you will rarely see whether predictions were right.'];
+    }
+    if (p >= 0.78) {
+      return ['A real prediction problem', 'ML looks reasonable here. Start simple and make it beat a boring baseline.'];
+    }
+    if (p >= 0.55) {
+      return ['Worth a small experiment', 'ML may help, but you should compare it with a simple baseline first.'];
+    }
+    if (p >= 0.35) {
+      return ['Could go either way', 'Try the simple version first. You may find that you do not need ML.'];
+    }
+    return ['Probably not an ML problem', 'This looks more like rules, analytics, or ordinary software.'];
+  }
+
+  function verdictFor(p) {
+    if (p >= 0.78) return ['PROBABLY YES', 'ML looks worth trying.', 'You have a repeated prediction problem, a measurable target, and enough reason to learn from past data. Start with a simple baseline.'];
+    if (p >= 0.55) return ['MAYBE YES', 'ML could be useful.', 'There is enough here to test it, but not enough to skip a simpler approach.'];
+    if (p >= 0.35) return ['MAYBE', 'Try the simple solution first.', 'Build the rule, SQL query, or basic regression first. Then see what is still missing.'];
+    return ['PROBABLY NO', 'You probably do not need ML.', 'A rule, calculation, dashboard, or normal software may solve this more clearly and cheaply.'];
+  }
+
+  function nextStepFor(p, v) {
+    if (v.target_quality <= 1) return '<strong>Try this first:</strong> Write down exactly what you want to predict and how you will know whether a prediction was right.';
+    if (v.sql_sufficiency >= 3) return '<strong>Try this first:</strong> Build the SQL, dashboard, or calculation. Only add ML if there is a clear gap left.';
+    if (v.rule_solution >= 3) return '<strong>Try this first:</strong> Build the rule based version and measure how well it works.';
+    if (v.distribution_stability <= 1) return '<strong>Try this first:</strong> Test on later time periods, not just a random split, and decide how you will notice drift.';
+    if (p >= 0.55) return '<strong>Try this first:</strong> Use a simple baseline such as logistic regression, linear regression, or a small tree.';
+    return '<strong>Try this first:</strong> Describe the decision, the target, and the simplest non-ML solution in one paragraph.';
+  }
+
+  function renderEvidence(values) {
+    const cs = contributions(values).sort((a, b) => Math.abs(b.centered) - Math.abs(a.centered));
+    const positives = cs.filter(x => x.centered > 0.03).slice(0, 4);
+    const negatives = cs.filter(x => x.centered < -0.03).slice(0, 4);
+    const maxAbs = Math.max(...cs.map(x => Math.abs(x.centered)), 0.01);
+
+    const make = (x, negative = false) => {
+      const width = Math.max(8, Math.round(Math.abs(x.centered) / maxAbs * 100));
+      const note = negative ? x.meta.negative : x.meta.positive;
+      return `<div class="evidence-item ${negative ? 'negative' : ''}"><div class="evidence-head"><b>${x.meta.label}</b><span>${x.centered > 0 ? '+' : ''}${x.centered.toFixed(2)}</span></div><div class="evidence-bar"><i style="width:${width}%"></i></div><div class="evidence-note">${note}</div></div>`;
+    };
+
+    $('#forEvidence').innerHTML = positives.length ? positives.map(x => make(x)).join('') : '<p class="tiny">Nothing strongly pushed the result toward ML.</p>';
+    $('#againstEvidence').innerHTML = negatives.length ? negatives.map(x => make(x, true)).join('') : '<p class="tiny">Nothing strongly pushed the result away from ML.</p>';
+  }
+
+  function equation(values) {
+    const parts = MODEL.features.map(name => `${MODEL.coefficients[name].toFixed(3)} x ${values[name]}  // ${FEATURES[name].label}`);
+    return `z = ${MODEL.intercept.toFixed(3)}\n  + ${parts.join('\n  + ')}\n\nP(ML) = 1 / (1 + exp(-z))`;
+  }
+
+  function updateUrl(values) {
+    const params = new URLSearchParams();
+    MODEL.features.forEach(name => params.set(name, String(values[name])));
+    try { history.replaceState(null, '', `${location.pathname}?${params.toString()}#result`); } catch (_) {}
+  }
+
+  function loadUrl() {
+    const params = new URLSearchParams(location.search);
+    let found = false;
+    MODEL.features.forEach(name => {
+      const val = params.get(name);
+      if (val !== null && /^[0-4]$/.test(val)) {
+        const input = form.querySelector(`input[name="${name}"][value="${val}"]`);
+        if (input) { input.checked = true; found = true; }
+      }
+    });
+    return found;
+  }
+
+  function render(values, scroll = true) {
+    const p = probability(values);
+    const pct = Math.round(p * 100);
+    const [status, title, copy] = verdictFor(p);
+    const [summary, sentence] = pickSummary(p, values);
+    $('#stamp').textContent = status;
+    $('#probability').textContent = `${pct}%`;
+    $('#meterFill').style.width = `${pct}%`;
+    $('#verdictTitle').textContent = title;
+    $('#verdictCopy').textContent = copy;
+    $('#summary').textContent = summary;
+    $('#sentence').textContent = sentence;
+    $('#nextStep').innerHTML = nextStepFor(p, values);
+    $('#equation').textContent = equation(values);
+    renderEvidence(values);
+    resultSection.classList.remove('hidden');
+    updateUrl(values);
+    window.__lastVerdict = { values, p, pct, status, title, copy, summary, sentence };
+    if (scroll) resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  form.addEventListener('submit', e => { e.preventDefault(); render(getValues()); });
+  $('#editBtn').addEventListener('click', () => quizSection.scrollIntoView({ behavior: 'smooth' }));
+
+  $('#shareBtn').addEventListener('click', async () => {
+    const v = window.__lastVerdict;
+    if (!v) return;
+    const text = `Should I use ML?\n${v.pct}% chance ML is worth trying.\n${v.title}\n${location.href}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      const button = $('#shareBtn');
+      const old = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => { button.textContent = old; }, 1500);
+    } catch { window.prompt('Copy result:', text); }
+  });
+
+  $('#cardBtn').addEventListener('click', () => {
+    const v = window.__lastVerdict;
+    if (!v) return;
+    const canvas = $('#shareCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#f2f2ee';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#111111';
+    ctx.fillRect(60, 58, 1080, 2);
+    ctx.font = '600 22px Helvetica, Arial, sans-serif';
+    ctx.fillText('SHOULD I USE ML?', 60, 104);
+    ctx.fillStyle = '#df4b24';
+    ctx.font = '500 150px Helvetica, Arial, sans-serif';
+    ctx.fillText(`${v.pct}%`, 55, 280);
+    ctx.fillStyle = '#111111';
+    ctx.font = '500 50px Helvetica, Arial, sans-serif';
+    wrapText(ctx, v.title, 60, 375, 1040, 58);
+    ctx.font = '600 18px Helvetica, Arial, sans-serif';
+    ctx.fillText(v.summary.toUpperCase(), 60, 535);
+    ctx.fillStyle = '#666660';
+    ctx.font = '16px Helvetica, Arial, sans-serif';
+    ctx.fillText('Ten questions about whether ML is worth trying.', 60, 580);
+    const a = document.createElement('a');
+    a.download = `should-i-use-ml-${v.pct}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    let yy = y;
+    for (const word of words) {
+      const test = line ? `${line} ${word}` : word;
+      if (ctx.measureText(test).width > maxWidth && line) { ctx.fillText(line, x, yy); line = word; yy += lineHeight; }
+      else { line = test; }
+    }
+    if (line) ctx.fillText(line, x, yy);
+  }
+
+  const dialog = $('#aboutDialog');
+  $('#aboutBtn').addEventListener('click', () => dialog.showModal());
+  $('#closeDialog').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
+
+  const m = MODEL.metrics;
+  $('#metrics').innerHTML = [
+    ['ROC AUC', m.roc_auc.toFixed(3)],
+    ['Accuracy', `${Math.round(m.accuracy_0_5 * 100)}%`],
+    ['Test cases', m.holdout_rows.toLocaleString()],
+  ].map(([k, v]) => `<div class="metric"><b>${v}</b><span>${k}</span></div>`).join('');
+
+  if (loadUrl()) render(getValues(), false);
+})();
+
+</script>
+</body>
+</html>

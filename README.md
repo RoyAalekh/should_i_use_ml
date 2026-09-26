@@ -1,63 +1,57 @@
 # Should I use ML?
 
-A small browser based classifier for a question that usually deserves an argument.
+A small website that asks ten questions about a problem and estimates whether machine learning is worth trying.
 
-Answer ten questions. It gives you a probability, a verdict, the strongest reasons for and against ML, and a mildly bureaucratic diagnosis.
+The point is simple: not every problem needs ML.
 
-The model is logistic regression. Prediction runs in the browser.
-
-## Run
+## Run it
 
 ```bash
 python -m http.server 8000
 ```
 
-Open `http://localhost:8000`.
+Then open `http://localhost:8000`.
 
 There are no runtime dependencies.
 
-## Model
+## What the model uses
 
-The model uses ten answers, each scored from 0 to 4:
+The ten questions cover:
 
-- data scale
-- repeated decisions
-- target quality
-- pattern complexity
-- strength of a rule based solution
-- need to generalize
-- feedback loop quality
-- whether SQL or a dashboard is enough
-- pressure to use AI
-- distribution stability
+- how much data you have
+- how often the decision is made
+- whether the target is measurable
+- how complicated the pattern is
+- how far simple rules can get
+- whether the system must handle new cases
+- whether you will see outcomes later
+- whether SQL or a dashboard may already solve it
+- whether ML is being pushed before the problem is clear
+- whether future data will look like past data
 
-The current weights came from 9,000 simulated project cases. The simulation is in `train_model.py`.
+The site uses logistic regression. Prediction runs in the browser.
 
-The labels are synthetic. The score is not evidence that ML is right for a real project. It is satire with an inspectable model underneath it.
+## Training
 
-## Retrain
+The first model was fitted on 9,000 simulated project examples. The labels are synthetic, so the score is not a scientific answer about whether a real project needs ML.
 
-Install NumPy and scikit-learn, then run:
+The useful part is the breakdown of what pushed the result up or down.
+
+Run training with:
 
 ```bash
 python train_model.py
 ```
 
-Training output goes to `artifacts/`, which is ignored by git. If a retrained model is worth releasing, review it and replace `model.js` by hand.
+Training output goes to `artifacts/`, which is ignored by git.
 
 ## Files
 
-- `index.html`: page
-- `styles.css`: layout
-- `app.js`: inference and verdicts
-- `model.js`: released model weights
-- `train_model.py`: fitting code
-- `build_standalone.py`: makes a one file build for sharing
+- `index.html` page
+- `styles.css` layout
+- `app.js` browser logic
+- `model.js` model weights used by the site
+- `train_model.py` training code
+- `build_standalone.py` optional one file build
 
-`standalone.html`, Python cache files, virtual environments, and training artifacts are ignored.
-
-## Use
-
-This is for satire, teaching, and checking whether a modelling project has a clear reason to exist.
-
-Do not use it for consequential decisions.
+Generated files are not committed.

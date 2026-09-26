@@ -4,6 +4,12 @@ A small website that asks ten questions about a problem and estimates whether ma
 
 The point is simple: not every problem needs ML.
 
+<a href="https://raw.githack.com/RoyAalekh/should_i_use_ml/main/standalone.html">
+  <img src="./preview.svg" width="280" alt="Preview of Should I use ML?">
+</a>
+
+[Open the demo](https://raw.githack.com/RoyAalekh/should_i_use_ml/main/standalone.html)
+
 ## Run it
 
 ```bash
@@ -52,6 +58,8 @@ Training output goes to `artifacts/`, which is ignored by git.
 - `app.js` browser logic
 - `model.js` model weights used by the site
 - `train_model.py` training code
-- `build_standalone.py` optional one file build
+- `build_standalone.py` makes the one-file version
+- `standalone.html` one-file demo
+- `preview.svg` README preview
 
-Generated files are not committed.
+`standalone.html` is kept in the repo on purpose so the demo is easy to open. Other generated training files stay ignored.
